@@ -1,5 +1,6 @@
 import * as React from "react"
-import { GalleryVerticalEnd } from "lucide-react"
+import { Link } from "react-router-dom"
+import { Home,User,Eye,Info, ListOrdered,FileSearch2,CreditCard,Inbox, type LucideIcon, Package2,  } from "lucide-react"
 
 import {
   Sidebar,
@@ -15,144 +16,95 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
+type NavItem = {
+  title: string
+  url: string
+  Icon?: LucideIcon
+  isActive?: boolean
+}
+type NavGroup = {
+  title: string
+  url: string
+  items: NavItem[]
+}
+
 // This is sample data.
-const data = {
+const data:{navMain: NavGroup[]} = {
   navMain: [
     {
-      title: "Personal",
+      title: "PERSONAL",
       url: "#",
       items: [
         {
           title: "Home",
-          url: "#",
+          url: "/Home",
+          Icon:Home,
+      
         },
         {
           title: "MyLeaves",
-          url: "#",
+          url: "/MyLeaves",
+          Icon:User
         },
       ],
     },
     {
-      title: "Building Your Application",
+      title: "ATTENDANCE",
       url: "#",
       items: [
         {
-          title: "Routing",
+          title: "View Attendance",
           url: "#",
+          Icon:Eye
         },
         {
-          title: "Data Fetching",
+          title: "Interviews",
           url: "#",
-          isActive: true,
+          Icon:Inbox
         },
-        {
-          title: "Rendering",
-          url: "#",
-        },
-        {
-          title: "Caching",
-          url: "#",
-        },
-        {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
-        },
+       
       ],
     },
     {
-      title: "API Reference",
+      title: "INFORMATION",
       url: "#",
       items: [
         {
-          title: "Components",
+          title: "Email & Information",
           url: "#",
+          Icon:Info,
         },
         {
-          title: "File Conventions",
+          title: "Documents",
           url: "#",
+          Icon:Package2
         },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
+       
       ],
     },
     {
-      title: "Architecture",
+      title: "EXPENSE",
       url: "#",
       items: [
         {
-          title: "Accessibility",
+          title: "Add Expenses",
           url: "#",
+          Icon:CreditCard,
         },
         {
-          title: "Fast Refresh",
+          title: "Expenses Reports",
           url: "#",
+          Icon:FileSearch2
         },
         {
-          title: "Next.js Compiler",
+          title: "Statements",
           url: "#",
+          Icon:ListOrdered
         },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
+     
       ],
     },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
-          url: "#",
-        },
-      ],
-    },
+   
   ],
 }
 
@@ -163,15 +115,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
+              <Link to="/">
+                <div className=" text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center ">
+                  <img className="h-8 w-10" src="mst-logo.png" alt=""/>
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Documentation</span>
-                  <span className="">v1.0.0</span>
+                <div className="flex flex-col gap-0.5 leading-none">  
+                <span> <img className="h-4 w-30" src="mst-txt.png" alt=""/></span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -182,19 +133,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
-                    {item.title}
-                  </a>
+                <span className="font-medium">{item.title}</span>
                 </SidebarMenuButton>
                 {item.items?.length ? (
                   <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                      {item.items.map((subItem) => {
+                      const IconComp = subItem.Icon // ✅ Dynamic icon handle
+                      return (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={subItem.isActive}
+                          >
+                            <Link
+                              to={subItem.url}
+                              className="flex items-center gap-2"
+                            >
+                              {IconComp && (
+                                <IconComp className="h-4 w-4" />
+                              )}
+                              <span>{subItem.title}</span>
+                            </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
-                    ))}
+                    )})}
                   </SidebarMenuSub>
                 ) : null}
               </SidebarMenuItem>
