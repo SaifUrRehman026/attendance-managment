@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,64 +15,98 @@ export function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("flex w-[100vh] h-[60vh] rounded shadow-2xl justify-center items-center", className)} {...props}>
-     
-      <div className="w-1/2 flex items-center justify-center bg-[#FFFFFF]">
-        <img
-          src="loginpage.jpg"
-          alt="login banner"
-          className="w-[50vh] h-[60vh] object-cover"
-        />
-      </div>
+  const [showPassword, setShowPassword] = useState(false)
 
-      
-      <div className="w-1/2 flex items-center justify-center p-8">
-        <Card className="w-[550px]">
-          <CardHeader>
-            <div className="flex gap-4 items-center">
-              
-              <div className="flex items-center justify-center border rounded-full h-[100px] w-[100px]">
-                <img
-                  src="mst-logo.png"
-                  alt="login"
-                  className="w-[60px]"
-                />
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div
+        className={cn(
+          "flex flex-col md:flex-row w-full max-w-5xl rounded shadow-2xl overflow-hidden bg-white",
+          className
+        )}
+        {...props}
+      >
+
+        <div className="hidden md:flex w-1/2 items-center justify-center bg-white">
+          <img
+            src="loginpage.jpg"
+            alt="login banner"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+       
+        <div className="w-full md:w-1/2 flex items-center justify-center p-6">
+          <Card className="w-full max-w-md border-0 shadow-none">
+            <CardHeader>
+              <div className="flex gap-4 items-center my-5">
+                <div className="flex items-center justify-center border rounded-full h-[80px] w-[80px]">
+                  <img src="mst-logo.png" alt="login" className="w-[50px]" />
+                </div>
+                <div className="flex flex-col items-start mt-2">
+                  <CardTitle className="text-xl">
+                    <h1 className="pl-[23px]">Welcome to</h1>
+                    <h1>MST Employees Portal</h1>
+                  </CardTitle>
+                  <CardDescription className="pt-2">
+                    Login To Your Account
+                  </CardDescription>
+                </div>
               </div>
-             
-              <div className="flex flex-col items-start">
-                <CardTitle className="text-xl">
-                  Welcome to MST Employees Portal
-                </CardTitle>
-                <CardDescription>
-                  Login To Your Account
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <form>
-              <div className="grid gap-6">
-                <div className="grid gap-3">
+            </CardHeader>
+
+            <CardContent>
+              <form className="space-y-6">
+                {/* Email */}
+                <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input className="rounded-2xl border-1 border-[#CED4DA]"
+                  <Input
+                    className="rounded-2xl border border-[#CED4DA]"
                     id="email"
                     type="email"
                     placeholder="m@example.com"
                     required
                   />
                 </div>
-                <div className="grid gap-3">
+
+                {/* Password + Show/Hide */}
+                <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input className="rounded-2xl border-1 border-[#CED4DA]" id="password" type="password" required />
+                  <div className="relative">
+                    <Input
+                      className="rounded-2xl border border-[#CED4DA] pr-24"
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                    />
+                    <div className="absolute inset-y-0 right-3 flex items-center gap-2">
+                      <input
+                        id="showPassword"
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={() => setShowPassword(!showPassword)}
+                      />
+                      <Label
+                        htmlFor="showPassword"
+                        className="cursor-pointer text-sm text-gray-600"
+                      >
+                        Show
+                      </Label>
+                    </div>
+                  </div>
                 </div>
-                <Button type="submit" className=" rounded-2xl w-full bg-linear-to-r from-[#71F7F3] to-[#37B6D0]">
+
+                {/* Button */}
+                <Button
+                  type="submit"
+                  className="rounded-2xl w-full bg-gradient-to-r from-[#71F7F3] to-[#37B6D0] text-white"
+                >
                   Login
                 </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )
