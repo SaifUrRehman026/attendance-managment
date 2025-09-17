@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import axios from "axios"
 import {
   Card,
   CardContent,
@@ -10,13 +11,62 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import type { userInfo } from "os"
+
 
 export function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const data={username:"", password:""}
+  const [inputData, setInputData]= useState(data)
   const [showPassword, setShowPassword] = useState(false)
+const handleData=(e:React.ChangeEvent<HTMLInputElement>)=>{
+  const { name, value } = e.target;
+setInputData({...inputData, [name]:value})
+}
+ 
 
+
+
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post(
+      "https://pkdservers.com/LMSDev/api/AuthUser/Login",
+      inputData,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    console.log("Login Api Response:", res.data);
+    if(res.data){
+     const parsedUser = res.data.user ? JSON.parse(res.data.user) : {};
+      localStorage.setItem("token", parsedUser.access_token);
+          localStorage.setItem("user", JSON.stringify({
+        id: res.data.id,
+        name: res.data.MachineName,
+        profile: res.data.ProfilePicture,
+        roles: res.data.role,
+        ...parsedUser 
+      }));
+
+      console.log("Saved Data in localStorage");
+       alert("Login successful");
+    } else {
+      alert("Invalid email or password ");
+    }
+      
+    }
+
+   catch (err: any) {
+    if (err.response) {
+      console.error("Server error:", err.response.status, err.response.data);
+      
+      
+    } else {
+      console.error("Error:", err.message);
+    }
+  }
+};
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
       <div
@@ -56,26 +106,32 @@ export function Login({
             </CardHeader>
 
             <CardContent>
-              <form className="space-y-6">
-                {/* Email */}
+              <form onSubmit={handleSubmit}  className="space-y-6">
+                
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     className="rounded-2xl border border-[#CED4DA]"
-                    id="email"
+                    id="username"
                     type="email"
+                    name="username"
+                    onChange={handleData}
+                    value={inputData.username}
                     placeholder="m@example.com"
                     required
                   />
                 </div>
 
-                {/* Password + Show/Hide */}
+               
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
                     <Input
                       className="rounded-2xl border border-[#CED4DA] pr-24"
                       id="password"
+                      name="password"
+                      value={inputData.password}
+                      onChange={handleData}
                       type={showPassword ? "text" : "password"}
                       required
                     />
@@ -96,8 +152,8 @@ export function Login({
                   </div>
                 </div>
 
-                {/* Button */}
-                <Button
+               
+                <Button 
                   type="submit"
                   className="rounded-2xl w-full bg-gradient-to-r from-[#71F7F3] to-[#37B6D0] text-white"
                 >
