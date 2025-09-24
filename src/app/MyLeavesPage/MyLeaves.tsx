@@ -30,7 +30,7 @@ export function MyLeaves() {
   const [leaves, setLeaves] = useState<Leave[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [rotating, setRotating] = useState(false); // 🔄 rotation state
+  const [rotating, setRotating] = useState(false); 
 
   useEffect(() => {
     fetchLeaves();
@@ -98,7 +98,7 @@ export function MyLeaves() {
     });
   };
 
-  // 🔍 Generic Search
+
   const filteredLeaves = leaves.filter((leave) =>
     Object.values(leave).some((value) =>
       String(value).toLowerCase().includes(search.toLowerCase())
@@ -131,7 +131,7 @@ export function MyLeaves() {
             >
               Clear
             </button>
-            {/* 🔄 Rotate Icon */}
+           
             <button onClick={handleReload}>
               <FaArrowsRotate
                 className={`h-6 w-6 ${
