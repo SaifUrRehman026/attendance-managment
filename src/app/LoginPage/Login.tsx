@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 
 
 
@@ -28,7 +31,8 @@ setInputData({...inputData, [name]:value})
  
 
 
-
+const { login } = useAuth();
+const navigate = useNavigate();
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   try {
@@ -37,36 +41,41 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       inputData,
       { headers: { "Content-Type": "application/json" } }
     );
+
     console.log("Login Api Response:", res.data);
-    if(res.data){
-     const parsedUser = res.data.user ? JSON.parse(res.data.user) : {};
-      localStorage.setItem("token", parsedUser.access_token);
-          localStorage.setItem("user", JSON.stringify({
+
+    if (res.data) {
+      const parsedUser = res.data.user ? JSON.parse(res.data.user) : {};
+      const token = parsedUser.access_token;
+
+      const userData = {
         id: res.data.id,
         name: res.data.MachineName,
         profile: res.data.ProfilePicture,
         roles: res.data.role,
-        ...parsedUser 
-      }));
+        ...parsedUser,
+      };
 
-      console.log("Saved Data in localStorage");
-       alert("Login successful");
+      
+      login(userData, token);
+
+      console.log("Saved Data in AuthContext & localStorage");
+     
+
+      // ✅ Navigate without reload
+      navigate("/dashboard");
     } else {
       alert("Invalid email or password ");
     }
-      
-    }
-
-   catch (err: any) {
+  } catch (err: any) {
     if (err.response) {
       console.error("Server error:", err.response.status, err.response.data);
-      
-      
     } else {
       console.error("Error:", err.message);
     }
   }
 };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
       <div

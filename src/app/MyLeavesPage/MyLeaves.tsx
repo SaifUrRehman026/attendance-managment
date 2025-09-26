@@ -7,6 +7,7 @@ import { FaArrowsRotate } from "react-icons/fa6";
 
 import {
   Table,
+
   TableBody,
   TableCell,
   TableFooter,
@@ -114,7 +115,7 @@ export function MyLeaves() {
 
   return (
     <>
-      <div className="bg-amber-200 mt-8 m-auto">
+      <div className="bg-amber-200  m-auto">
         <div className="flex justify-between items-center rounded border p-2">
           <h2>Your Applied Leaves</h2>
           <div className="flex items-center space-x-3">

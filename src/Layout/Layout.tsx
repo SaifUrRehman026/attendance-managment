@@ -35,7 +35,7 @@ export default function Layout() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 bg-[#EDF1F5]">
+        <main className="flex-1 p-14 bg-[#EDF1F5]">
           <Outlet />
         </main>
       </SidebarInset>

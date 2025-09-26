@@ -11,7 +11,7 @@ const Home = () => {
   }; */}
 
   {/* if (loading) return <p className="text-center">Loading...</p>; */}
-      <div className="bg-amber-200 mt-8 m-auto">
+      <div className="bg-amber-200  m-auto">
         <div className="flex justify-between items-center rounded border p-2">
           <h2>Home Page</h2>
           <div className="flex items-center space-x-3">
