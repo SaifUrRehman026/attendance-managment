@@ -1,4 +1,5 @@
 import {SectionCards}  from "@/components/ui/section-card"
+import Calendar from "@/Calendar/calendar";
 // import { FaArrowsRotate } from "react-icons/fa6";
 // import { useEffect, useState } from "react";
 const Home = () => {
@@ -31,6 +32,9 @@ const Home = () => {
         <div className="bg-[#FFFFFF] p-4 overflow-x-hide">
           <div className="md:block overflow-x-auto">
         <SectionCards></SectionCards>
+          </div>
+          <div>
+            <Calendar/>
           </div>
         </div>
       </div>

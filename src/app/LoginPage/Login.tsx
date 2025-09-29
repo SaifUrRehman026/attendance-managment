@@ -1,80 +1,77 @@
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import axios from "axios"
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+export function Login({ className, ...props }: React.ComponentProps<"div">) {
+  const initialData = { username: "", password: "" };
+  const [inputData, setInputData] = useState(initialData);
+  const [showPassword, setShowPassword] = useState(false);
 
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
+  const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputData({ ...inputData, [name]: value });
+  };
 
-export function Login({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  const data={username:"", password:""}
-  const [inputData, setInputData]= useState(data)
-  const [showPassword, setShowPassword] = useState(false)
-const handleData=(e:React.ChangeEvent<HTMLInputElement>)=>{
-  const { name, value } = e.target;
-setInputData({...inputData, [name]:value})
-}
- 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        "https://pkdservers.com/LMSDev/api/AuthUser/Login",
+        inputData,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
+      console.log("Login Api Response:", res.data);
 
-const { login } = useAuth();
-const navigate = useNavigate();
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post(
-      "https://pkdservers.com/LMSDev/api/AuthUser/Login",
-      inputData,
-      { headers: { "Content-Type": "application/json" } }
-    );
+      if (res.data) {
+        const parsedUser = res.data.user ? JSON.parse(res.data.user) : {};
+        const token = parsedUser.access_token;
 
-    console.log("Login Api Response:", res.data);
+        const userData = {
+          id: res.data.id,
+          name: res.data.MachineName,
+          profile: res.data.ProfilePicture,
+          roles: res.data.role,
+          ...parsedUser,
+        };
 
-    if (res.data) {
-      const parsedUser = res.data.user ? JSON.parse(res.data.user) : {};
-      const token = parsedUser.access_token;
+        // Save in AuthContext
+        login(userData, token);
 
-      const userData = {
-        id: res.data.id,
-        name: res.data.MachineName,
-        profile: res.data.ProfilePicture,
-        roles: res.data.role,
-        ...parsedUser,
-      };
+        // ✅ Save User_id in localStorage for calendar and other forms
+        localStorage.setItem("User_id", res.data.id);
+        localStorage.setItem("token", token);
 
-      
-      login(userData, token);
+        console.log("Saved Data in AuthContext & localStorage");
 
-      console.log("Saved Data in AuthContext & localStorage");
-     
-
-      // ✅ Navigate without reload
-      navigate("/dashboard");
-    } else {
-      alert("Invalid email or password ");
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } else {
+        alert("Invalid email or password.");
+      }
+    } catch (err: any) {
+      if (err.response) {
+        console.error("Server error:", err.response.status, err.response.data);
+      } else {
+        console.error("Error:", err.message);
+      }
     }
-  } catch (err: any) {
-    if (err.response) {
-      console.error("Server error:", err.response.status, err.response.data);
-    } else {
-      console.error("Error:", err.message);
-    }
-  }
-};
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
@@ -85,16 +82,12 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         )}
         {...props}
       >
-
+        {/* Left Banner */}
         <div className="hidden md:flex w-1/2 items-center justify-center bg-white">
-          <img
-            src="loginpage.jpg"
-            alt="login banner"
-            className="w-full h-full object-cover"
-          />
+          <img src="loginpage.jpg" alt="login banner" className="w-full h-full object-cover" />
         </div>
 
-       
+        {/* Login Form */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-6">
           <Card className="w-full max-w-md border-0 shadow-none">
             <CardHeader>
@@ -107,16 +100,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     <h1 className="pl-[23px]">Welcome to</h1>
                     <h1>MST Employees Portal</h1>
                   </CardTitle>
-                  <CardDescription className="pt-2">
-                    Login To Your Account
-                  </CardDescription>
+                  <CardDescription className="pt-2">Login To Your Account</CardDescription>
                 </div>
               </div>
             </CardHeader>
 
             <CardContent>
-              <form onSubmit={handleSubmit}  className="space-y-6">
-                
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Email */}
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -131,7 +122,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   />
                 </div>
 
-               
+                {/* Password */}
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
@@ -151,18 +142,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                         checked={showPassword}
                         onChange={() => setShowPassword(!showPassword)}
                       />
-                      <Label
-                        htmlFor="showPassword"
-                        className="cursor-pointer text-sm text-gray-600"
-                      >
+                      <Label htmlFor="showPassword" className="cursor-pointer text-sm text-gray-600">
                         Show
                       </Label>
                     </div>
                   </div>
                 </div>
 
-               
-                <Button 
+                <Button
                   type="submit"
                   className="rounded-2xl w-full bg-gradient-to-r from-[#71F7F3] to-[#37B6D0] text-white"
                 >
@@ -174,5 +161,5 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         </div>
       </div>
     </div>
-  )
+  );
 }
