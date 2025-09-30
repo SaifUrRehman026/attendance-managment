@@ -143,8 +143,8 @@ export function MyLeaves() {
           </div>
         </div>
 
-        <div className="bg-[#FFFFFF] p-4 overflow-x-hide">
-          <div className="md:block overflow-x-auto">
+        <div className="bg-[#FFFFFF] p-4 ">
+  <div className="h-150 overflow-x-auto">
             <Table className="min-w-full border">
               <TableHeader>
                 <TableRow>
@@ -195,6 +195,7 @@ export function MyLeaves() {
           </div>
         </div>
       </div>
+      {/* </div> */}
     </>
   );
 }

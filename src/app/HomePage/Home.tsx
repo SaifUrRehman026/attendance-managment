@@ -33,7 +33,7 @@ const Home = () => {
           <div className="md:block overflow-x-auto">
         <SectionCards></SectionCards>
           </div>
-          <div>
+          <div className="mt-15">
             <Calendar/>
           </div>
         </div>

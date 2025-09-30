@@ -4,24 +4,21 @@ import Layout from "@/Layout/Layout";
 import { MyLeaves } from "@/app/MyLeavesPage/MyLeaves";
 import { Login } from "@/app/LoginPage/Login";
 import Home from "@/app/HomePage/Home";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ProtectedRoute } from "@/components/protectedRoute";
 import { useAuth } from "@/context/AuthContext";
 
 function AppRouter() {
-  const { token, loading } = useAuth(); // ✅ get loading from context
+  const { token, loading } = useAuth(); 
   const isLoggedIn = !!token;
 
-  // ✅ Show a loader or null while context is initializing
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
     <Routes>
-      {/* Public Route */}
       <Route path="/login" element={<Login />} />
 
-      {/* Protected Routes */}
       <Route
         element={
           <ProtectedRoute>

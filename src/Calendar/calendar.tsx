@@ -20,6 +20,14 @@ interface MyEvent {
 
 type LeaveType = "Full Day" | "Half Day" | "Late arrival / Early leaving";
 
+// ✅ Subtype mapping with IDs
+const fullDayOptions = [
+  { label: "Regular", id: 1 },
+  { label: "Annual", id: 2 },
+  { label: "Paternal", id: 3 },
+  { label: "Marriage", id: 4 },
+];
+
 export default function CalendarComponent() {
   const [events, setEvents] = useState<MyEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -29,10 +37,9 @@ export default function CalendarComponent() {
   const [endDate, setEndDate] = useState("");
   const [leaveType, setLeaveType] = useState<LeaveType>("Full Day");
   const [reason, setReason] = useState("");
-  const [fullDaySubType, setFullDaySubType] = useState<string>("");
+  const [fullDaySubType, setFullDaySubType] = useState<number | null>(null);
 
   const leaveTypes: LeaveType[] = ["Full Day", "Half Day", "Late arrival / Early leaving"];
-  const fullDayOptions = ["Regular", "Annual", "Paternal", "Marriage"];
 
   const pad = (n: number) => n.toString().padStart(2, "0");
   const formatForAPI = (d: Date, endOfDay = false) =>
@@ -44,7 +51,7 @@ export default function CalendarComponent() {
     setEndDate("");
     setLeaveType("Full Day");
     setReason("");
-    setFullDaySubType("");
+    setFullDaySubType(null);
   };
 
   const fetchEvents = async () => {
@@ -97,11 +104,6 @@ export default function CalendarComponent() {
       return;
     }
 
-    if (leaveType === "Full Day" && !fullDaySubType) {
-      alert("Please select a Full Day category.");
-      return;
-    }
-
     const start = new Date(startDate);
     const end = new Date(endDate);
     if (start > end) {
@@ -109,15 +111,20 @@ export default function CalendarComponent() {
       return;
     }
 
+    if (leaveType === "Full Day" && !fullDaySubType) {
+      alert("Please select a Full Day category.");
+      return;
+    }
+   
+
     const payload = {
       StartDate: formatForAPI(start),
       EndDate: formatForAPI(end, false),
       HalfDay: leaveType === "Half Day",
       IsShortLeave: leaveType === "Late arrival / Early leaving",
-      Leave_Type_ID: 1,
       Reason: reason,
       User_id: userId,
-      LeaveSubType: leaveType === "Full Day" ? fullDaySubType : undefined,
+      LeaveSubType: leaveType === "Full Day" ? fullDaySubType : null,
     };
 
     try {
@@ -134,6 +141,12 @@ export default function CalendarComponent() {
       alert("Failed to submit leave request. Please try again.");
     }
   };
+   const colorMap: Record<string, string> = {
+  info: "#17a2b8",      
+  success: "#28a745",   
+  danger: "#dc3545",    
+  secondary: "#6c757d", 
+};
 
   const handleCancel = () => resetForm();
 
@@ -141,18 +154,31 @@ export default function CalendarComponent() {
 
   return (
     <div style={{ height: "80vh", width: "100%", margin: "10px auto", maxWidth: "1200px" }}>
-      <Calendar<MyEvent>
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        selectable
-        onSelectSlot={handleSelectSlot}
-        date={date}
-        onNavigate={setDate}
-        views={["month"]}
-        style={{ height: "100%", width: "100%" }}
-      />
+<Calendar<MyEvent>
+  localizer={localizer}
+  events={events}
+  startAccessor="start"
+  endAccessor="end"
+  selectable
+  onSelectSlot={handleSelectSlot}
+  date={date}
+  onNavigate={setDate}
+  views={["month"]}
+  style={{ height: "100%", width: "100%" }}
+  eventPropGetter={(event) => {
+    const backgroundColor = event.color ? colorMap[event.color] || "#007bff" : "#007bff";
+    return {
+      style: {
+        backgroundColor,
+        color: "#fff",        // white text for contrast
+        borderRadius: "6px",
+        padding: "2px 6px",
+        fontSize: "13px",
+        fontWeight: 500,
+      },
+    };
+  }}
+/>
 
       {selectedDate && (
         <div
@@ -182,6 +208,7 @@ export default function CalendarComponent() {
           >
             <h2 style={{ textAlign: "center", marginBottom: 25, color: "#333" }}>Leave Request</h2>
             <form onSubmit={handleSubmit}>
+             
               <div style={{ marginBottom: 15 }}>
                 <label style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>Start Date</label>
                 <input
@@ -208,7 +235,7 @@ export default function CalendarComponent() {
                 />
               </div>
 
-              {/* Leave Type + Full Day Subtype */}
+           
               <div style={{ marginBottom: 15 }}>
                 <label style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>Leave Type</label>
                 <div style={{ display: "flex", gap: 15 }}>
@@ -220,7 +247,7 @@ export default function CalendarComponent() {
                         checked={leaveType === type}
                         onChange={(e) => {
                           setLeaveType(e.target.value as LeaveType);
-                          if (e.target.value !== "Full Day") setFullDaySubType("");
+                          if (e.target.value !== "Full Day") setFullDaySubType(null);
                         }}
                       />
                       <span style={{ fontSize: 14 }}>{type}</span>
@@ -233,14 +260,14 @@ export default function CalendarComponent() {
                     <label style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>Full Day Category</label>
                     <div style={{ display: "flex", gap: 15, flexWrap: "wrap" }}>
                       {fullDayOptions.map((opt) => (
-                        <label key={opt} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <label key={opt.id} style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <input
                             type="radio"
-                            value={opt}
-                            checked={fullDaySubType === opt}
-                            onChange={(e) => setFullDaySubType(e.target.value)}
+                            value={opt.id}
+                            checked={fullDaySubType === opt.id}
+                            onChange={(e) => setFullDaySubType(Number(e.target.value))}
                           />
-                          <span style={{ fontSize: 14 }}>{opt}</span>
+                          <span style={{ fontSize: 14 }}>{opt.label}</span>
                         </label>
                       ))}
                     </div>
@@ -248,6 +275,7 @@ export default function CalendarComponent() {
                 )}
               </div>
 
+            
               <div style={{ marginBottom: 25 }}>
                 <label style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>Reason</label>
                 <textarea
@@ -262,6 +290,7 @@ export default function CalendarComponent() {
                 <div style={{ fontSize: 12, color: "#888", textAlign: "right" }}>{reason.length}/250</div>
               </div>
 
+              {/* Buttons */}
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
                 <button
                   type="button"

@@ -1,6 +1,17 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
-import { Home,User,Eye,Info, ListOrdered,FileSearch2,CreditCard,Inbox, type LucideIcon, Package2,  } from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
+import {
+  Home,
+  User,
+  Eye,
+  Info,
+  ListOrdered,
+  FileSearch2,
+  CreditCard,
+  Inbox,
+  type LucideIcon,
+  Package2,
+} from "lucide-react"
 
 import {
   Sidebar,
@@ -20,7 +31,6 @@ type NavItem = {
   title: string
   url: string
   Icon?: LucideIcon
-  isActive?: boolean
 }
 type NavGroup = {
   title: string
@@ -28,8 +38,7 @@ type NavGroup = {
   items: NavItem[]
 }
 
-// This is sample data.
-const data:{navMain: NavGroup[]} = {
+const data: { navMain: NavGroup[] } = {
   navMain: [
     {
       title: "PERSONAL",
@@ -38,13 +47,12 @@ const data:{navMain: NavGroup[]} = {
         {
           title: "Home",
           url: "/Home",
-          Icon:Home,
-      
+          Icon: Home,
         },
         {
           title: "MyLeaves",
           url: "/MyLeaves",
-          Icon:User
+          Icon: User,
         },
       ],
     },
@@ -55,14 +63,13 @@ const data:{navMain: NavGroup[]} = {
         {
           title: "View Attendance",
           url: "#",
-          Icon:Eye
+          Icon: Eye,
         },
         {
           title: "Interviews",
           url: "#",
-          Icon:Inbox
+          Icon: Inbox,
         },
-       
       ],
     },
     {
@@ -72,14 +79,13 @@ const data:{navMain: NavGroup[]} = {
         {
           title: "Email & Information",
           url: "#",
-          Icon:Info,
+          Icon: Info,
         },
         {
           title: "Documents",
           url: "#",
-          Icon:Package2
+          Icon: Package2,
         },
-       
       ],
     },
     {
@@ -89,26 +95,27 @@ const data:{navMain: NavGroup[]} = {
         {
           title: "Add Expenses",
           url: "#",
-          Icon:CreditCard,
+          Icon: CreditCard,
         },
         {
           title: "Expenses Reports",
           url: "#",
-          Icon:FileSearch2
+          Icon: FileSearch2,
         },
         {
           title: "Statements",
           url: "#",
-          Icon:ListOrdered
+          Icon: ListOrdered,
         },
-     
       ],
     },
-   
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation();
+  const currentPath = location.pathname
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -116,47 +123,51 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className=" text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center ">
-                  <img className="h-8 w-10" src="mst-logo.png" alt=""/>
+                <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center ">
+                  <img className="h-8 w-10" src="mst-logo.png" alt="" />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">  
-                <span> <img className="h-4 w-30" src="mst-txt.png" alt=""/></span>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span>
+                    <img className="h-4 w-30" src="mst-txt.png" alt="" />
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                <span className="font-medium">{item.title}</span>
+                  <span className="font-medium">{item.title}</span>
                 </SidebarMenuButton>
                 {item.items?.length ? (
                   <SidebarMenuSub>
-                      {item.items.map((subItem) => {
-                      const IconComp = subItem.Icon // ✅ Dynamic icon handle
+                    {item.items.map((subItem) => {
+                      const IconComp = subItem.Icon
+                      const isActive = currentPath === subItem.url 
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={subItem.isActive}
-                          >
-                            <Link
-                              to={subItem.url}
-                              className="flex items-center gap-2"
-                            >
-                              {IconComp && (
-                                <IconComp className="h-4 w-4" />
-                              )}
-                              <span>{subItem.title}</span>
-                            </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    )})}
+                          <SidebarMenuSubButton asChild isActive={isActive}>
+                        <Link
+  to={subItem.url}
+  className={`flex items-center gap-2 ${
+    isActive
+      ? "text-[#FCC28E] font-semibold"   
+      : "text-gray-400 hover:text-[#FCC28E]" 
+  }`}
+>
+  {IconComp && <IconComp className="h-4 w-4" />}
+  <span>{subItem.title}</span>
+</Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      )
+                    })}
                   </SidebarMenuSub>
                 ) : null}
               </SidebarMenuItem>
@@ -164,6 +175,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarRail />
     </Sidebar>
   )

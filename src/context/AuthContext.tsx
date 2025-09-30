@@ -14,7 +14,7 @@ interface AuthContextType {
   token: string | null;
   login: (user: User, token: string) => void;
   logout: () => void;
-  loading: boolean; // ✅ add loading state
+  loading: boolean; 
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,9 +22,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // ✅ loading state
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Load from localStorage on app start
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -32,10 +31,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
-    setLoading(false); // ✅ finished loading
+    setLoading(false); 
   }, []);
-
-  // ✅ Login method
+                                      //login
   const login = (userData: User, token: string) => {
     setUser(userData);
     setToken(token);
@@ -43,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // ✅ Logout method
+                                      //Logout 
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -58,7 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ✅ Custom hook
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

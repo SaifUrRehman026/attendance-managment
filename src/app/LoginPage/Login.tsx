@@ -53,13 +53,11 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
         // Save in AuthContext
         login(userData, token);
 
-        // ✅ Save User_id in localStorage for calendar and other forms
         localStorage.setItem("User_id", res.data.id);
         localStorage.setItem("token", token);
 
         console.log("Saved Data in AuthContext & localStorage");
 
-        // Navigate to dashboard
         navigate("/dashboard");
       } else {
         alert("Invalid email or password.");
@@ -82,12 +80,10 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
         )}
         {...props}
       >
-        {/* Left Banner */}
         <div className="hidden md:flex w-1/2 items-center justify-center bg-white">
           <img src="loginpage.jpg" alt="login banner" className="w-full h-full object-cover" />
         </div>
 
-        {/* Login Form */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-6">
           <Card className="w-full max-w-md border-0 shadow-none">
             <CardHeader>
@@ -107,7 +103,6 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email */}
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -122,7 +117,6 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
                   />
                 </div>
 
-                {/* Password */}
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
